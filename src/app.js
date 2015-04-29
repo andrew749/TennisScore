@@ -1,35 +1,62 @@
 //method needed to listen for each button
-function Person(){
+function Player(){
   this.score=0;
-    this.incrementScore=function(){
-      this.score+=15;
-    };
+  this.incrementScore=function(){
+     this.score+=15;
+  };
   this.resetScore=function(){
       this.score=0;
   };
 }
-var Player1=new Person();
-var Player2=new Person();
+//logic for tennis match
+//3 states regular, deuce, advnatage
+function Game(){
+  var Person1=new Player();
+  var Person2=new Player();
+  this.scorePerson1=function(){Person1.incrementScore();};
+  this.scorePerson2=function(){Person2.incrementScore();};
+  this.resetScore=function(){
+      Person1.resetScore();
+    Person2.resetScore();
+  };
+  this.testScore=function(){
+    //if the game is over
+    if(Person1.score>45&&Person2.score<=30||Person2.score>45&&Person1.score<=30){
+      this.resetScore();
+    }
+    //deuce state
+    if(Person1.score==45&&Person2.score==45){
+      Person1.score=30;
+      Person2.score=30;
+    }
+  };
+  this.getScoreString=function(){
+    return "Player 1: "+Person1.score+"\nPlayer 2: "+Person2.score;
+  };
+}
+
+var game=new Game();
 simply.on('singleClick', function(e) {
-  simply.subtitle(e.button);
   switch(e.button){
     case 'up':
-      Player1.incrementScore();
+      game.scorePerson1();
       break;
     case 'down':
-      Player2.incrementScore();
+      game.scorePerson2();
       break;
     case 'select':
-      Player1.reset();
-      Player2.reset();
+      game.resetScore();
       break;
   }
+  game.testScore();
+  console.log(game.getScoreString());
   simply.text({
   title: 'Tennis Score',
-    body: "Player 1:  "+Player1.score+"\n Player 2:  "+Player2.score,
+    body: game.getScoreString(),
 }, true);
 });
-simply.text({
+ game.testScore();
+  simply.text({
   title: 'Tennis Score',
-  body: "Player 1:  "+Player1.score+"\n Player 2:  "+Player2.score,
+    body: game.getScoreString(),
 }, true);
